@@ -1,8 +1,6 @@
-import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Picture;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.DoubleAccumulator;
 
 public class SeamCarver {
     private Picture picture;
