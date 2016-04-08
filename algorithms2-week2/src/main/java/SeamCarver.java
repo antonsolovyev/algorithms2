@@ -1,6 +1,8 @@
+import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Picture;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.DoubleAccumulator;
 
 public class SeamCarver {
     private Picture picture;
@@ -12,7 +14,7 @@ public class SeamCarver {
         initEnergy();
     }
 
-    public void initEnergy() {
+    private void initEnergy() {
         this.energy = new double[picture.width()][picture.height()];
         for(int i = 0; i < picture.width(); i++) {
             for(int j = 0; j < picture.height(); j++) {
@@ -22,7 +24,7 @@ public class SeamCarver {
     }
 
     public Picture picture() {
-        return picture;
+        return new Picture(picture);
     }                          // current picture
 
     public int width() {
@@ -35,7 +37,7 @@ public class SeamCarver {
 
     public double energy(int x, int y) {
         if(x < 0 || x >= picture.width() || y < 0 || y >= picture.height()) {
-            throw new IllegalArgumentException();
+            throw new IndexOutOfBoundsException();
         }
 
         return energy[x][y];
@@ -58,15 +60,124 @@ public class SeamCarver {
             res += p * p;
         }
 
-        return Math.round(Math.sqrt(res) * 100.0) / 100.0; // round to 2 decimal places
+//        return Math.round(Math.sqrt(res) * 100.0) / 100.0; // round to 2 decimal places
+        return Math.sqrt(res);
     }
 
     public int[] findHorizontalSeam() {
-        return null;
+        double[][] distTo = new double[picture.width()][picture.height()];
+        for(int i = 0; i < picture.width(); i++) {
+            for(int j = 0; j < picture.height(); j++) {
+                if(i == 0) {
+                    distTo[i][j] = energy(i, j);
+                }
+                else {
+                    distTo[i][j] = Double.POSITIVE_INFINITY;
+                }
+            }
+        }
+
+        int[][] edgeTo = new int[picture.width()][picture.height()];
+
+        for(int i = 0; i < picture.width(); i++) {
+            for(int j = 0; j < picture.height(); j++) {
+                for(int k = -1; k < 2; k++) {
+                    int iAdj = i + 1;
+                    int jAdj = j + k;
+
+                    if(iAdj < 0 || iAdj >= picture.width()) {
+                        continue;
+                    }
+
+                    if(jAdj < 0 || jAdj >= picture.height()) {
+                        continue;
+                    }
+
+                    double newDistTo = distTo[i][j] + energy(iAdj, jAdj);
+                    if(newDistTo < distTo[iAdj][jAdj]) {
+                        distTo[iAdj][jAdj] = newDistTo;
+                        edgeTo[iAdj][jAdj] = j;
+                    }
+                }
+            }
+        }
+
+        double minDistTo = Double.POSITIVE_INFINITY;
+        int minJ = 0;
+        for(int j = 0; j < picture.height(); j++) {
+            if(distTo[picture.width() - 1][j] < minDistTo) {
+                minDistTo = distTo[picture.width() - 1][j];
+                minJ = j;
+            }
+        }
+
+        int[] res = new int[picture.width()];
+
+        int j = minJ;
+        for(int i = picture.width() - 1; i >= 0; i--) {
+            res[i] = j;
+            j = edgeTo[i][j];
+        }
+
+        return res;
     }              // sequence of indices for horizontal seam
 
     public int[] findVerticalSeam() {
-        return null;
+        double[][] distTo = new double[picture.width()][picture.height()];
+        for(int j = 0; j < picture.height(); j++) {
+            for(int i = 0; i < picture.width(); i++) {
+                if(j == 0) {
+                    distTo[i][j] = energy(i, j);
+                }
+                else {
+                    distTo[i][j] = Double.POSITIVE_INFINITY;
+                }
+            }
+        }
+
+        int[][] edgeTo = new int[picture.width()][picture.height()];
+
+        for(int j = 0; j < picture.height(); j++) {
+            for(int i = 0; i < picture.width(); i++) {
+                for(int k = -1; k < 2; k++) {
+                    int jAdj = j + 1;
+                    int iAdj = i + k;
+
+                    if(jAdj < 0 || jAdj >= picture.height()) {
+                        continue;
+                    }
+
+                    if(iAdj < 0 || iAdj >= picture.width()) {
+                        continue;
+                    }
+
+                    double newDistTo = distTo[i][j] + energy(iAdj, jAdj);
+                    if(newDistTo < distTo[iAdj][jAdj]) {
+                        distTo[iAdj][jAdj] = newDistTo;
+                        edgeTo[iAdj][jAdj] = i;
+                    }
+                }
+            }
+        }
+
+        double minDistTo = Double.POSITIVE_INFINITY;
+        int minI = 0;
+        for(int i = 0; i < picture.width(); i++) {
+            if(distTo[i][picture.height() - 1] < minDistTo) {
+                minDistTo = distTo[i][picture.height() - 1];
+                minI = i;
+            }
+        }
+
+        int[] res = new int[picture.height()];
+
+        int i = minI;
+        for(int j = picture.height() - 1; j >= 0; j--) {
+            res[j] = i;
+            i = edgeTo[i][j];
+        }
+
+        return res;
     }                // sequence of indices for vertical seam
 
     public void removeHorizontalSeam(int[] seam) {

@@ -1,8 +1,12 @@
 import edu.princeton.cs.algs4.Picture;
+import edu.princeton.cs.algs4.ThreeSum;
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.awt.*;
 import java.io.File;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +42,7 @@ public class SeamCarverTest {
         seamCarver = new SeamCarver(picture);
         for(int i = 0; i < picture.width(); i++) {
             for(int j = 0; j < picture.height(); j++) {
-                assertEquals(expectedEnergy[i][j], seamCarver.energy(i, j), 0.0);
+                assertEquals(expectedEnergy[i][j], seamCarver.energy(i, j), 0.01);
             }
         }
     }
@@ -89,6 +93,72 @@ public class SeamCarverTest {
 //        printPic(seamCarver.picture());
 //        picture.show();
 //        Thread.sleep(10000);
+    }
+
+    @Test
+    public void testFindVerticalSeam() throws Exception {
+        Picture picture = new Picture(getPath("6x5.png"));
+        SeamCarver seamCarver = new SeamCarver(picture);
+        int[] seam = seamCarver.findVerticalSeam();
+        assertTrue(Arrays.equals(new int[]{3, 4, 3, 2, 1}, seam));
+
+        picture = new Picture(getPath("10x12.png"));
+        seamCarver = new SeamCarver(picture);
+        seam = seamCarver.findVerticalSeam();
+        assertTrue(Arrays.equals(new int[]{5, 6, 7, 8, 7, 7, 6, 7, 6, 5, 6, 5}, seam));
+
+        picture = new Picture(getPath("7x3.png"));
+        seamCarver = new SeamCarver(picture);
+        seam = seamCarver.findVerticalSeam();
+        assertTrue(Arrays.equals(new int[]{2, 3, 2}, seam));
+
+        picture = new Picture(getPath("5x6.png"));
+        seamCarver = new SeamCarver(picture);
+        seam = seamCarver.findVerticalSeam();
+        assertTrue(Arrays.equals(new int[]{1, 2, 2, 3, 2, 1}, seam));
+    }
+
+    @Test
+    public void testHorizontalSeam() throws Exception {
+        Picture picture = new Picture(getPath("6x5.png"));
+        SeamCarver seamCarver = new SeamCarver(picture);
+        int[] seam = seamCarver.findHorizontalSeam();
+        assertTrue(Arrays.equals(new int[]{1, 2, 1, 2, 1, 0}, seam));
+
+        picture = new Picture(getPath("10x12.png"));
+        seamCarver = new SeamCarver(picture);
+        seam = seamCarver.findHorizontalSeam();
+        assertTrue(Arrays.equals(new int[]{8, 9, 10, 10, 10, 9, 10, 10, 9, 8}, seam));
+
+        picture = new Picture(getPath("7x3.png"));
+        seamCarver = new SeamCarver(picture);
+        seam = seamCarver.findHorizontalSeam();
+        assertTrue(Arrays.equals(new int[]{0, 1, 1, 1, 1, 1, 0}, seam));
+
+        picture = new Picture(getPath("5x6.png"));
+        seamCarver = new SeamCarver(picture);
+        seam = seamCarver.findHorizontalSeam();
+        assertTrue(Arrays.equals(new int[]{2, 3, 2, 3, 2}, seam));
+    }
+
+    @Ignore
+    @Test
+    public void testVisual() throws Exception {
+        Picture picture = new Picture(getPath("HJocean.png"));
+        SeamCarver seamCarver = new SeamCarver(picture);
+
+        System.out.println(picture.width());
+
+        picture.show();
+        Thread.sleep(10000);
+
+        for(int i = 0; i < 256; i++) {
+            System.out.println("removing #" + i);
+            seamCarver.removeVerticalSeam(seamCarver.findVerticalSeam());
+        }
+
+        seamCarver.picture().show();
+        Thread.sleep(10000);
     }
 
     private String getPath(String name) {
