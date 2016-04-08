@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.Picture;
-import edu.princeton.cs.algs4.ThreeSum;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Ignore;
 import org.junit.Test;
