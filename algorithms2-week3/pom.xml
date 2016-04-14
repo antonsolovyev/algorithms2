@@ -2,10 +2,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.solovyev</groupId>
-    <artifactId>algorithms2-week2</artifactId>
+    <artifactId>algorithms2-week3</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>algorithms2-week2</name>
+    <name>algorithms2-week3</name>
     <url>http://maven.apache.org</url>
     <parent>
         <groupId>com.solovyev</groupId>
@@ -28,7 +28,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>seamCarving</finalName>
+                            <finalName>xxx</finalName>
                             <descriptors>
                                 <descriptor>src/assembly/zip.xml</descriptor>
                             </descriptors>
