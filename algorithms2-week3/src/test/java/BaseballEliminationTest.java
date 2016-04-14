@@ -71,28 +71,6 @@ public class BaseballEliminationTest {
         assertEquals(5, baseballElimination.against("Toronto", "Detroit"));
     }
 
-//    @Test
-//    public void testVertexCalcs() {
-//
-//        String filename = getPath("teams5a.txt");
-//
-//        BaseballElimination baseballElimination = new BaseballElimination(filename);
-//
-//        for(int j = 0; j < baseballElimination.numberOfTeams(); j++) {
-//            for(int i = 0; i < baseballElimination.numberOfTeams(); i++) {
-//                System.out.print(baseballElimination.getGameVertex(i, j) + " ");
-//            }
-//            System.out.println();
-//         }
-//
-//        System.out.println("==");
-//
-//        System.out.println(baseballElimination.getTeam1FromGameVertex(23));
-//        System.out.println(baseballElimination.getTeam2FromGameVertex(23));
-//
-//        System.out.println(baseballElimination.getTeamFromTeamVertex(6));
-//    }
-
     private String getPath(String name) {
         return BaseballEliminationTest.class.getResource(new File("baseball", name).getPath()).getPath();
     }
