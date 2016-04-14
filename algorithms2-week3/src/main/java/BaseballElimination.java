@@ -7,6 +7,8 @@ import java.util.*;
 
 public class BaseballElimination {
 
+    private static final int SOURCE_VERTEX = 0;
+    private static final int TARGET_VERTEX = 1;
     private int numberOfTeams;
     private int[][] games;
     private Map<String, Team> teams;
@@ -57,30 +59,50 @@ public class BaseballElimination {
     }                                // all teams
 
     public int wins(String team) {
+        if(!teams.containsKey(team)) {
+            throw new IllegalArgumentException();
+        }
+
         return teams.get(team).getWins();
     }                      // number of wins for given team
 
     public int losses(String team) {
+        if(!teams.containsKey(team)) {
+            throw new IllegalArgumentException();
+        }
+
         return teams.get(team).getLosses();
     }                    // number of losses for given team
 
     public int remaining(String team) {
+        if(!teams.containsKey(team)) {
+            throw new IllegalArgumentException();
+        }
+
         return teams.get(team).getRemaning();
     }                 // number of remaining games for given team
 
     public int against(String team1, String team2) {
+        if(!teams.containsKey(team1) || !teams.containsKey(team2)) {
+            throw new IllegalArgumentException();
+        }
+
         return games[teams.get(team1).getId()][teams.get(team2).getId()];
     }    // number of remaining games between team1 and team2
 
-    public boolean isEliminated(String teamName) {
-        return certificateOfElimination(teamName) != null;
+    public boolean isEliminated(String team) {
+        if(!teams.containsKey(team)) {
+            throw new IllegalArgumentException();
+        }
+
+        return certificateOfElimination(team) != null;
     }             // is given team eliminated?
 
     public Iterable<String> certificateOfElimination(String teamName) {
 
         Team team = teams.get(teamName);
         if(team == null) {
-            throw new IllegalArgumentException("Unknown team: " + teamName);
+            throw new IllegalArgumentException();
         }
 
         int vertexCount = 2 + numberOfTeams + numberOfTeams * (numberOfTeams - 1) / 2;
@@ -95,10 +117,7 @@ public class BaseballElimination {
                     continue;
                 }
 
-//                flowNetwork.addEdge(new FlowEdge(getSourceVertex(), getGameVertex(i, j), games[i][j]));
-//                flowNetwork.addEdge(new FlowEdge(getGameVertex(i, j), getTeamVertex(i), Double.POSITIVE_INFINITY));
-//                flowNetwork.addEdge(new FlowEdge(getGameVertex(i, j), getTeamVertex(j), Double.POSITIVE_INFINITY));
-                flowNetwork.addEdge(new FlowEdge(getSourceVertex(), gameVertex, games[i][j]));
+                flowNetwork.addEdge(new FlowEdge(SOURCE_VERTEX, gameVertex, games[i][j]));
                 flowNetwork.addEdge(new FlowEdge(gameVertex, getTeamVertex(i), Double.POSITIVE_INFINITY));
                 flowNetwork.addEdge(new FlowEdge(gameVertex, getTeamVertex(j), Double.POSITIVE_INFINITY));
                 gameVertex++;
@@ -116,11 +135,10 @@ public class BaseballElimination {
                 return new HashSet<>(Arrays.asList(t.getName()));
             }
 
-            flowNetwork.addEdge(new FlowEdge(getTeamVertex(t.getId()), getTargetVertex(), limit >= 0 ? limit : 0));
+            flowNetwork.addEdge(new FlowEdge(getTeamVertex(t.getId()), TARGET_VERTEX, limit >= 0 ? limit : 0));
         }
 
-        FordFulkerson fordFulkerson = new FordFulkerson(flowNetwork, getSourceVertex(), getTargetVertex());
-        System.out.println(flowNetwork);
+        FordFulkerson fordFulkerson = new FordFulkerson(flowNetwork, SOURCE_VERTEX, TARGET_VERTEX);
 
         Set<String> res = new HashSet<>();
         for(Team t : teams.values()) {
@@ -141,21 +159,9 @@ public class BaseballElimination {
         return null;
     }  // subset R of teams that eliminates given team; null if not eliminated
 
-    private int getSourceVertex() {
-        return 0;
+    private int getTeamVertex(int id) {
+        return 2 + id;
     }
-
-    private int getTargetVertex() {
-        return 1;
-    }
-
-    private int getTeamVertex(int team) {
-        return 2 + team;
-    }
-
-//    private int getGameVertex(int team1, int team2) {
-//        return 2 + numberOfTeams + numberOfTeams * team2 + team1;
-//    }
 
     private static class Team {
         private final int id;

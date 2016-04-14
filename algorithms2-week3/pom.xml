@@ -28,7 +28,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>xxx</finalName>
+                            <finalName>baseball</finalName>
                             <descriptors>
                                 <descriptor>src/assembly/zip.xml</descriptor>
                             </descriptors>
