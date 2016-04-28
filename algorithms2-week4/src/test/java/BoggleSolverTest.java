@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -34,7 +35,22 @@ public class BoggleSolverTest {
         System.out.println("word count: " + res.size() + ", words: " + res);
     }
 
-    @Ignore
+    @Test
+    public void testExotic() throws Exception {
+
+        String[] dictionary = readDictionary("dictionary-yawl.txt");
+        BoggleSolver boggleSolver = new BoggleSolver(dictionary);
+        
+        for(String boardName : Arrays.asList("board-antidisestablishmentarianisms.txt",
+                "board-dichlorodiphenyltrichloroethanes.txt",
+                "board-pneumonoultramicroscopicsilicovolcanoconiosis.txt")) {
+
+            BoggleBoard boggleBoard = new BoggleBoard(getPath(boardName));
+            Set<String> res = (Set<String>) boggleSolver.getAllValidWords(boggleBoard);
+            System.out.println("word count: " + res.size() + ", words: " + res);
+        }
+    }
+
     @Test
     public void testSolver2() throws Exception {
         String[] dictionary = readDictionary("dictionary-yawl.txt");
@@ -51,22 +67,21 @@ public class BoggleSolverTest {
         assertEquals(300, getScore(boggleSolver, "board-points300.txt"));
     }
 
-    @Ignore
     @Test
     public void testSpeed() throws Exception {
-        String[] dictionary = readDictionary("dictionary-algs4.txt");
+        String[] dictionary = readDictionary("dictionary-yawl.txt");
         BoggleSolver boggleSolver = new BoggleSolver(dictionary);
 
         
         long start = System.currentTimeMillis();
         int  n = 100;
         for(int i = 0; i < n; i++) {
-            System.out.println(i);
+            System.out.println("Running board #" + i);
             
             boggleSolver.getAllValidWords(new BoggleBoard());
         }
         long end = System.currentTimeMillis();
-        System.out.println("average time: " + ((end - start) / n) + "ms");
+        System.out.println("Average time per board: " + ((end - start) / n) + "ms");
     }
 
     private int getScore(BoggleSolver boggleSolver, String boardFileName) {

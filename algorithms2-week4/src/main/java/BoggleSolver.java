@@ -5,27 +5,26 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class BoggleSolver {
-    private TrieSET dictionary;
-    //private TST<Boolean> dictionary;
+    private TST<Boolean> dictionary;
 
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
-        this.dictionary = new TrieSET();
+        this.dictionary = new TST<>();
         for(String s : dictionary) {
-            this.dictionary.add(s);
+            this.dictionary.put(s, true);
         }
     }
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
         
-        boolean[][] marked = new boolean[board.cols()][board.rows()];
+        boolean[][] marked = new boolean[board.rows()][board.cols()];
         
         Set<String> res = new TreeSet<>();
         
-        for(int i = 0; i < board.cols(); i++) {
-            for(int j = 0; j < board.rows(); j++) {
+        for(int i = 0; i < board.rows(); i++) {
+            for(int j = 0; j < board.cols(); j++) {
                 dfs(board, i, j, marked, "", res);
             }
         }
@@ -53,7 +52,7 @@ public class BoggleSolver {
             
             for(int k = i - 1; k <= i + 1; k++) {
                 for(int l = j - 1; l <= j + 1; l++) {
-                    if(k < 0 || k >= boggleBoard.cols() || l < 0 || l >= boggleBoard.rows()) {
+                    if(k < 0 || k >= boggleBoard.rows() || l < 0 || l >= boggleBoard.cols()) {
                         continue;
                     }
                     
