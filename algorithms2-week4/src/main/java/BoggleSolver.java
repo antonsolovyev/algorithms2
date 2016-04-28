@@ -40,13 +40,17 @@ public class BoggleSolver {
             pathLetters = pathLetters + (letter == 'Q' ? "QU" : letter);
 
             Iterable<String> wordsPrefixed = dictionary.keysWithPrefix(pathLetters);
+            
             if(! wordsPrefixed.iterator().hasNext()) {
                 return;
             }
-            
-            for(String w : wordsPrefixed) {
-                if(w.length() >2 && w.length() == pathLetters.length()) {
-                    wordsFound.add(pathLetters);
+
+            if(pathLetters.length() > 2) {
+                for (String w : wordsPrefixed) {
+                    if (w.length() == pathLetters.length()) {
+                        wordsFound.add(pathLetters);
+                        break;
+                    }
                 }
             }
             
