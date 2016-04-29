@@ -1,5 +1,3 @@
-import edu.princeton.cs.algs4.TST;
-
 import java.util.*;
 
 public class BoggleSolver {
@@ -31,16 +29,17 @@ public class BoggleSolver {
     }
 
     private Node contains(Node n, CharSequence s, int position) {
+        if(n == null) {
+            return null;
+        }
+        
         if(position == s.length()) {
             return n;
         }
 
         int index = charToIndex(s.charAt(position));
-        if(n.next[index] == null) {
-            return null;
-        } else {
-            return contains(n.next[index], s, position + 1);
-        }
+        
+        return contains(n.next[index], s, position + 1);
     }
 
     private void put(CharSequence s) {
