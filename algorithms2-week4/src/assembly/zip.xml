@@ -12,7 +12,6 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>BoggleSolver.java</include>
-                <include>Trie.java</include>
             </includes>
         </fileSet>
     </fileSets>

@@ -3,17 +3,74 @@ import edu.princeton.cs.algs4.TST;
 import java.util.*;
 
 public class BoggleSolver {
-    private Trie dictionary;
+    private static final int R = 26;
+    
+    private Node root;
 
+    private static class Node {
+        private Node[] next = new Node[R];
+        boolean isPopulated;
+        boolean hasChildren;
+    }
+    
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
-        this.dictionary = new Trie();
         for(String s : dictionary) {
-            this.dictionary.put(s);
+            put(s);
         }
     }
 
+    private boolean contains(CharSequence s) {
+        Node n = contains(root, s, 0);
+        if(n == null) {
+            return false;
+        } else {
+            return n.isPopulated;
+        }
+    }
+
+    private Node contains(Node n, CharSequence s, int position) {
+        if(position == s.length()) {
+            return n;
+        }
+
+        int index = charToIndex(s.charAt(position));
+        if(n.next[index] == null) {
+            return null;
+        } else {
+            return contains(n.next[index], s, position + 1);
+        }
+    }
+
+    private void put(CharSequence s) {
+        root = put(root, s, 0);
+    }
+
+    private Node put(Node n, CharSequence s, int position) {
+        if(n == null) {
+            n = new Node();
+        }
+
+        if(position == s.length()) {
+            n.isPopulated = true;
+        } else {
+            int index = charToIndex(s.charAt(position));
+            n.next[index] = put(n.next[index], s, position + 1);
+            n.hasChildren = true;
+        }
+
+        return n;
+    }
+
+    private int charToIndex(char c) {
+        return c - 'A';
+    }
+
+    private char indexToChar(int index) {
+        return (char) (index + 'A');
+    }
+    
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
         
@@ -22,7 +79,7 @@ public class BoggleSolver {
         Set<String> res = new TreeSet<>();
         for(int i = 0; i < board.rows(); i++) {
             for(int j = 0; j < board.cols(); j++) {
-                dfs(board, i, j, marked, new StringBuilder(), res);
+                dfs(board, i, j, marked, new StringBuilder(), res, root);
             }
         }
         
@@ -30,7 +87,7 @@ public class BoggleSolver {
     }
     
     private void dfs(BoggleBoard boggleBoard, int i, int j, boolean[][] marked,
-                     StringBuilder pathLetters, Set<String> wordsFound) {
+                     StringBuilder pathLetters, Set<String> wordsFound, Node node) {
         boolean q = false;
         try {
             marked[i][j] = true;
@@ -42,13 +99,17 @@ public class BoggleSolver {
                 pathLetters.append(letter);
             }
 
-            Trie.ContainsResponse containsResponse = dictionary.contains2(pathLetters);
+            node = contains(node, pathLetters, pathLetters.length() - (q ? 2 : 1));
+            
+            if(node == null) {
+                return;
+            }
 
-            if (pathLetters.length() > 2 && containsResponse.getContains()) {
+            if (pathLetters.length() > 2 && node.isPopulated) {
                 wordsFound.add(pathLetters.toString());
             }
 
-            if(!containsResponse.getContainsAsPrefix()) {
+            if(!node.hasChildren) {
                 return;
             }
             
@@ -62,7 +123,7 @@ public class BoggleSolver {
                         continue;
                     }
                     
-                    dfs(boggleBoard, k, l, marked, pathLetters, wordsFound);
+                    dfs(boggleBoard, k, l, marked, pathLetters, wordsFound, node);
                 }
             }
         }
@@ -78,7 +139,7 @@ public class BoggleSolver {
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word) {
-        if(!dictionary.contains(word)) {
+        if(!contains(word)) {
             return 0;
         }
         
