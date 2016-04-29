@@ -1,11 +1,10 @@
 import edu.princeton.cs.algs4.TST;
-import edu.princeton.cs.algs4.TrieSET;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class BoggleSolver {
     private TST<Boolean> dictionary;
+    private Map<String, Boolean> prefixes;
 
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
@@ -14,6 +13,7 @@ public class BoggleSolver {
         for(String s : dictionary) {
             this.dictionary.put(s, true);
         }
+        prefixes = new HashMap<>();
     }
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
@@ -22,7 +22,6 @@ public class BoggleSolver {
         boolean[][] marked = new boolean[board.rows()][board.cols()];
         
         Set<String> res = new TreeSet<>();
-        
         for(int i = 0; i < board.rows(); i++) {
             for(int j = 0; j < board.cols(); j++) {
                 dfs(board, i, j, marked, "", res);
@@ -39,19 +38,23 @@ public class BoggleSolver {
             char letter = boggleBoard.getLetter(i, j);
             pathLetters = pathLetters + (letter == 'Q' ? "QU" : letter);
 
-            Iterable<String> wordsPrefixed = dictionary.keysWithPrefix(pathLetters);
+            Boolean prefixExists = prefixes.get(pathLetters);
+            if (prefixExists == null) {
+                Iterable<String> wordsPrefixed = dictionary.keysWithPrefix(pathLetters);
+                if (!wordsPrefixed.iterator().hasNext()) {
+                    prefixExists = false;
+                } else {
+                    prefixExists = true;
+                }
+                prefixes.put(pathLetters, prefixExists);
+            }
             
-            if(! wordsPrefixed.iterator().hasNext()) {
+            if(!prefixExists) {
                 return;
             }
-
-            if(pathLetters.length() > 2) {
-                for (String w : wordsPrefixed) {
-                    if (w.length() == pathLetters.length()) {
-                        wordsFound.add(pathLetters);
-                        break;
-                    }
-                }
+            
+            if (pathLetters.length() > 2 && dictionary.contains(pathLetters)) {
+                wordsFound.add(pathLetters);
             }
             
             for(int k = i - 1; k <= i + 1; k++) {
@@ -80,14 +83,6 @@ public class BoggleSolver {
             return 0;
         }
         
-        /*
-        0–2	0
-        3–4	1
-        5	2
-        6	3
-        7	5
-        8+	11
-        */
         switch(word.length()) {
             case 0:
             case 1:

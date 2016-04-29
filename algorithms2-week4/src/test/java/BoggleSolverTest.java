@@ -74,7 +74,7 @@ public class BoggleSolverTest {
 
         
         long start = System.currentTimeMillis();
-        int  n = 100;
+        int  n = 1000;
         for(int i = 0; i < n; i++) {
             System.out.println("Running board #" + i);
             
