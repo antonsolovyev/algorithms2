@@ -74,14 +74,12 @@ public class BoggleSolverTest {
 
         
         long start = System.currentTimeMillis();
-        int  n = 1000;
+        int  n = 10000;
         for(int i = 0; i < n; i++) {
-            System.out.println("Running board #" + i);
-            
             boggleSolver.getAllValidWords(new BoggleBoard());
         }
         long end = System.currentTimeMillis();
-        System.out.println("Average time per board: " + ((end - start) / n) + "ms");
+        System.out.println("Time for " + n + " boards: " + (end - start) + "ms");
     }
 
     private int getScore(BoggleSolver boggleSolver, String boardFileName) {

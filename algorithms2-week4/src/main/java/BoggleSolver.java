@@ -3,17 +3,15 @@ import edu.princeton.cs.algs4.TST;
 import java.util.*;
 
 public class BoggleSolver {
-    private TST<Boolean> dictionary;
-    private Map<String, Boolean> prefixes;
+    private Trie dictionary;
 
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
-        this.dictionary = new TST<>();
+        this.dictionary = new Trie();
         for(String s : dictionary) {
-            this.dictionary.put(s, true);
+            this.dictionary.put(s);
         }
-        prefixes = new HashMap<>();
     }
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
@@ -38,18 +36,7 @@ public class BoggleSolver {
             char letter = boggleBoard.getLetter(i, j);
             pathLetters = pathLetters + (letter == 'Q' ? "QU" : letter);
 
-            Boolean prefixExists = prefixes.get(pathLetters);
-            if (prefixExists == null) {
-                Iterable<String> wordsPrefixed = dictionary.keysWithPrefix(pathLetters);
-                if (!wordsPrefixed.iterator().hasNext()) {
-                    prefixExists = false;
-                } else {
-                    prefixExists = true;
-                }
-                prefixes.put(pathLetters, prefixExists);
-            }
-            
-            if(!prefixExists) {
+            if(!dictionary.containsPrefix(pathLetters)) {
                 return;
             }
             
