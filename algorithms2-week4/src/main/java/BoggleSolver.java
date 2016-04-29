@@ -22,7 +22,7 @@ public class BoggleSolver {
         Set<String> res = new TreeSet<>();
         for(int i = 0; i < board.rows(); i++) {
             for(int j = 0; j < board.cols(); j++) {
-                dfs(board, i, j, marked, "", res);
+                dfs(board, i, j, marked, new StringBuilder(), res);
             }
         }
         
@@ -30,18 +30,26 @@ public class BoggleSolver {
     }
     
     private void dfs(BoggleBoard boggleBoard, int i, int j, boolean[][] marked,
-                     String pathLetters, Set<String> wordsFound) {
+                     StringBuilder pathLetters, Set<String> wordsFound) {
+        boolean q = false;
         try {
             marked[i][j] = true;
             char letter = boggleBoard.getLetter(i, j);
-            pathLetters = pathLetters + (letter == 'Q' ? "QU" : letter);
-
-            if(!dictionary.containsPrefix(pathLetters)) {
-                return;
+            if(letter == 'Q') {
+                q = true;
+                pathLetters.append("QU");
+            } else {
+                pathLetters.append(letter);
             }
-            
-            if (pathLetters.length() > 2 && dictionary.contains(pathLetters)) {
-                wordsFound.add(pathLetters);
+
+            Trie.ContainsResponse containsResponse = dictionary.contains2(pathLetters);
+
+            if (pathLetters.length() > 2 && containsResponse.getContains()) {
+                wordsFound.add(pathLetters.toString());
+            }
+
+            if(!containsResponse.getContainsAsPrefix()) {
+                return;
             }
             
             for(int k = i - 1; k <= i + 1; k++) {
@@ -60,6 +68,10 @@ public class BoggleSolver {
         }
         finally {
             marked[i][j] = false;
+            pathLetters.deleteCharAt(pathLetters.length() - 1);
+            if(q) {
+                pathLetters.deleteCharAt(pathLetters.length() - 1);
+            }
         }
     }
 

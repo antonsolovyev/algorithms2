@@ -4,42 +4,64 @@ import java.util.List;
 public class Trie {
     private static final int R = 26;
     private Node root;
-    
-    public boolean contains(String s) {
-        return contains(root, s, 0, false);  
+
+    public static class ContainsResponse {
+        private final boolean contains;
+        private final boolean containsAsPrefix;
+        
+        public ContainsResponse(boolean contains, boolean containsAsPrefix) {
+            this.contains = contains;
+            this.containsAsPrefix = containsAsPrefix;
+        }
+
+        public boolean getContains() {
+            return contains;
+        }
+
+        public boolean getContainsAsPrefix() {
+            return containsAsPrefix;
+        }
     }
     
-    private boolean contains(Node n, String s, int position, boolean prefixSearch) {
+    public boolean contains(CharSequence s) {
+        return contains(root, s, 0).getContains();  
+    }
+
+    public boolean containsPrefix(CharSequence s) {
+        ContainsResponse containsResponse = contains(root, s, 0);
+        return containsResponse.getContainsAsPrefix() || containsResponse.getContains();
+    }
+    
+    public ContainsResponse contains2(CharSequence s) {
+        return contains(root, s, 0);
+    }
+            
+    private ContainsResponse contains(Node n, CharSequence s, int position) {
         if(position == s.length()) {
-            if(!prefixSearch) {
-                return n.isPopulated;
-            } else {
-                for(int i = 0; i < n.next.length; i++) {
-                    if(n.next[i] != null) {
-                        return true;
-                    }
+            boolean hasChildren = false;
+            for(int i = 0; i < n.next.length; i++) {
+                if (n.next[i] != null) {
+                    hasChildren = true;
+                    break;
                 }
-                return n.isPopulated;
             }
+            
+            return new ContainsResponse(n.isPopulated, hasChildren);
         }
         
         int index = charToIndex(s.charAt(position));
         if(n.next[index] == null) {
-            return false;
+            return new ContainsResponse(false, false);
         } else {
-            return contains(n.next[index], s, position + 1, prefixSearch);
+            return contains(n.next[index], s, position + 1);
         }
     }
-    
-    public void put(String s) {
+
+    public void put(CharSequence s) {
         root = put(root, s, 0);
     }
     
-    public boolean containsPrefix(String s) {
-        return contains(root, s, 0, true);
-    }
-    
-    private Node put(Node n, String s, int position) {
+    private Node put(Node n, CharSequence s, int position) {
         if(n == null) {
             n = new Node();
         }

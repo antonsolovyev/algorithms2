@@ -100,5 +100,4 @@ public class BoggleSolverTest {
     private String getPath(String name) {
         return BoggleSolverTest.class.getResource(new File("boggle", name).getPath()).getPath();
     }
-
 }
