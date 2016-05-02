@@ -14,6 +14,7 @@
         <module>algorithms2-week2</module>
         <module>algorithms2-week3</module>
         <module>algorithms2-week4</module>
+        <module>algorithms2-week6</module>
     </modules>
     
     <build>
