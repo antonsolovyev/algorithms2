@@ -31,15 +31,13 @@ public class BurrowsWheeler {
         int first = BinaryStdIn.readInt();
         String input = BinaryStdIn.readString();
         
-//        System.err.println("first: " + first);
-//        System.err.println("input: " + Arrays.asList(ArrayUtils.toObject(input.toCharArray())));
-        
+        // Track positions of last char
         int[] next = new int[input.length()];
         for(int i = 0; i < next.length; i++) {
             next[i] = i;
         }
         
-        // key indexed counting
+        // Sort position array by last char value using key indexed counting
         int[] tmp = new int[input.length()];
         int[] count = new int[256 + 1];
         for (int i = 0; i < next.length; i++) {
@@ -47,27 +45,23 @@ public class BurrowsWheeler {
             count[c + 1]++;
         }
 
-        // transform counts to indicies
         for (int r = 0; r < 256; r++) {
             count[r + 1] += count[r];
         }
 
-        // distribute
         for (int i = 0; i < next.length; i++) {
             int c = input.charAt(i);;
             tmp[count[c]++] = next[i];
         }
         next = tmp;
         
-//        System.err.println("next: " + Arrays.asList(next));
-
+        // Decode
         StringBuilder output = new StringBuilder();
         int n = next[first];
         for(int i = 0; i < input.length(); i++) {
             output.append(input.charAt(n));
             n = next[n];
         }
-//        System.err.println("output: " + Arrays.asList(ArrayUtils.toObject(output.toString().toCharArray())));
         
         BinaryStdOut.write(output.toString());
         BinaryStdOut.flush();        
