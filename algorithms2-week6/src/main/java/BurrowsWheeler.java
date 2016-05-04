@@ -34,18 +34,31 @@ public class BurrowsWheeler {
 //        System.err.println("first: " + first);
 //        System.err.println("input: " + Arrays.asList(ArrayUtils.toObject(input.toCharArray())));
         
-        Integer[] next = new Integer[input.length()];
+        int[] next = new int[input.length()];
         for(int i = 0; i < next.length; i++) {
             next[i] = i;
         }
+        
+        // key indexed counting
+        int[] tmp = new int[input.length()];
+        int[] count = new int[256 + 1];
+        for (int i = 0; i < next.length; i++) {
+            int c = input.charAt(i);
+            count[c + 1]++;
+        }
 
-        Arrays.sort(next, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer i1, Integer i2) {
-                return input.charAt(i1) - input.charAt(i2);
-            }
-        });
+        // transform counts to indicies
+        for (int r = 0; r < 256; r++) {
+            count[r + 1] += count[r];
+        }
 
+        // distribute
+        for (int i = 0; i < next.length; i++) {
+            int c = input.charAt(i);;
+            tmp[count[c]++] = next[i];
+        }
+        next = tmp;
+        
 //        System.err.println("next: " + Arrays.asList(next));
 
         StringBuilder output = new StringBuilder();
