@@ -1,6 +1,3 @@
-import java.util.Arrays;
-import java.util.Comparator;
-
 public class CircularSuffixArray {
     private String string;
     private int[] indexes;
@@ -39,9 +36,9 @@ public class CircularSuffixArray {
         while (i <= gt) {
             int t = charAt(a[i], d);
             if(t < v) {
-                exch(a, lt++, i++);
+                exchange(a, lt++, i++);
             } else if (t > v) {
-                exch(a, i, gt--);
+                exchange(a, i, gt--);
             } else {
                 i++;
             }
@@ -61,7 +58,7 @@ public class CircularSuffixArray {
         return string.charAt((d + i) % string.length());
     }
     
-    private void exch(int[] a, int i, int j) {
+    private void exchange(int[] a, int i, int j) {
         int temp = a[i];
         a[i] = a[j];
         a[j] = temp;
